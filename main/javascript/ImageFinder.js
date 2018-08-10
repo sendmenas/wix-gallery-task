@@ -1,23 +1,42 @@
 (function () {
 
-  var ImageFinder = window.CLASSES.ImageFinder = function () {};
+  var ImageFinder = window.CLASSES.ImageFinder = function (staticModule, flickrModule) {
+    this._staticModule = staticModule;
+    this._flickrModule = flickrModule;
+  };
 
-  ImageFinder.prototype.search = function (query) {
-    return {
-      query: 'demo',
-      images: [
-        {
-          id:'1',
-          url:'http://image.shutterstock.com/display_pic_with_logo/347836/99127196/stock-photo-demo-icon-99127196.jpg',
-          title:'demo image 1'
-        },
-        {
-          id:'2',
-          url:'http://t2.ftcdn.net/jpg/00/30/42/21/400_F_30422159_lzSKGlGNX1YcKGuIFDiEyZbmCF3hacIB.jpg',
-          title:'demo image 2'
-        }
-      ]
+  ImageFinder.prototype.search = function(_query) {
+    let data = window.DATA.staticImagesDb;
+    let filteredData = {
+      query: _query,
+      images: [],
     };
+    data.forEach(function(image) {
+      if (image.title.indexOf(_query) > -1) {
+        filteredData.images.push({
+          id: image.id,
+          url: image.url,
+          title: image.title,
+        });
+      }
+    });
+    return filteredData;
   }
 
+  ImageFinder.prototype.searchModules = function(_query, _module) {
+    let data = window.DATA.staticImagesDb;
+    let filteredData = {
+      query: _query,
+      images: [],
+    };
+    switch(_module) {
+      case "static":
+        return this._staticModule.findImages(data, _query);
+      case "flickr":
+        return this._flickrModule.findImages(_query);
+      default:
+        console.log("GOT TO DEFAULT");
+        break;
+    }
+  }
 })();

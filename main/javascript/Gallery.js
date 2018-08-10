@@ -13,8 +13,13 @@
    * start a new search
    * @param {String} query - search term to look for
    */
-  Gallery.prototype.doSearch = function (query) {
-    var searchResults = this._imageFinder.search(query);
+  Gallery.prototype.doSearch = function (query, moduleId = null) {
+    var searchResults = null;
+    if (moduleId == null) {
+      searchResults = this._imageFinder.search(query);
+    } else {
+      searchResults = this._imageFinder.searchModules(query, moduleId);
+    }
     this._onSearchResultReady(searchResults);
   };
 
@@ -31,6 +36,7 @@
    * @param {query:String{images:[{id:String, url:string, title:string}]}} searchResult - results object for gallery update
    */
   Gallery.prototype._onSearchResultReady = function (searchResult) {
+    console.log(searchResult);
     this._resultsNode.innerHTML = '';
     var imagesData = searchResult.images;
     for(var i = 0; i < imagesData.length; ++i){
