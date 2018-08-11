@@ -14,13 +14,9 @@
    * @param {String} query - search term to look for
    */
   Gallery.prototype.doSearch = function (query, moduleId = null) {
-    var searchResults = null;
-    if (moduleId == null) {
-      searchResults = this._imageFinder.search(query);
-    } else {
-      searchResults = this._imageFinder.searchModules(query, moduleId);
-    }
-    this._onSearchResultReady(searchResults);
+    var searchPromise = this._imageFinder.searchModules(query, moduleId);
+    searchPromise.then(this._onSearchResultReady.bind(this));
+    // this._onSearchResultReady.bind(this)
   };
 
   /**
@@ -28,7 +24,8 @@
    */
   Gallery.prototype._onSearchButtonClick = function (e) {
     var query = this._queryInputNode.value;
-    this.doSearch(query);
+    var selection = this._selectNode.value;
+    this.doSearch(query, selection);
   };
 
   /**
@@ -36,7 +33,6 @@
    * @param {query:String{images:[{id:String, url:string, title:string}]}} searchResult - results object for gallery update
    */
   Gallery.prototype._onSearchResultReady = function (searchResult) {
-    console.log(searchResult);
     this._resultsNode.innerHTML = '';
     var imagesData = searchResult.images;
     for(var i = 0; i < imagesData.length; ++i){
@@ -86,6 +82,19 @@
     this._searchBtnNode = document.createElement('button');
     this._searchBtnNode.innerHTML = 'search';
     this._controlsNode.appendChild(this._searchBtnNode);
+
+    this._selectNode = document.createElement('select');
+    this._selectNode.classList.add('moduleSelect');
+      this._optionsStatic = document.createElement('option');
+      this._optionsStatic.setAttribute('value', 'static');
+      this._optionsStatic.setAttribute('selected', 'selected');
+      this._optionsStatic.innerText = 'Static';
+      this._optionsFlickr = document.createElement('option');
+      this._optionsFlickr.setAttribute('value', 'flickr');
+      this._optionsFlickr.innerText = 'Flickr';
+      this._selectNode.appendChild(this._optionsStatic);
+      this._selectNode.appendChild(this._optionsFlickr);
+    this._controlsNode.appendChild(this._selectNode);
   };
 
 })();

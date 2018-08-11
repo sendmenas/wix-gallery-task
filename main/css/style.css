@@ -36,3 +36,9 @@
 body {
   background: url("../resources/images/Wix_logo.jpg") no-repeat bottom right;
 }
+
+.moduleSelect {
+  margin-left: 5px;
+  height: 22px;
+  width: 60px;
+}

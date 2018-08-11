@@ -35,6 +35,7 @@
 
   <script>
     var GalleryClass = CLASSES['Gallery'];
+    var GalleryClass2 = CLASSES['Gallery2'];
     var ImageFinderClass = CLASSES['ImageFinder'];
     var StaticModule = MODULES['Static'];
     var FlickrModule = MODULES['Flickr'];
@@ -45,13 +46,14 @@
 
     window.onload = function() {
       var gallery = new GalleryClass(imageFinder);
+      var gallery2 = new GalleryClass(imageFinder);
       gallery.addToNode(document.body);
+      gallery2.addToNode(document.body);
 
       initiateTest();
     };
   </script>
 </head>
 <body>
-
 </body>
 </html>
