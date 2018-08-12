@@ -12,11 +12,11 @@
   /**
    * start a new search
    * @param {String} query - search term to look for
+   * @param {String} moduleId - module name to look in
    */
   Gallery.prototype.doSearch = function (query, moduleId = null) {
-    var searchPromise = this._imageFinder.searchModules(query, moduleId);
-    searchPromise.then(this._onSearchResultReady.bind(this));
-    // this._onSearchResultReady.bind(this)
+    var searchPromise = this._imageFinder.search(query, moduleId, this);
+    searchPromise.then(this._onSearchResultReady.bind(this)).catch(function() { window.alert('FLICKR REQUEST FAILED'); });
   };
 
   /**

@@ -3,34 +3,35 @@
   var ImageFinder = window.CLASSES.ImageFinder = function (staticModule, flickrModule) {
     this._staticModule = staticModule;
     this._flickrModule = flickrModule;
+    this._flickrModuleRequestsArr = [];
   };
 
-  // ImageFinder.prototype.search = function(_query) {
-  //   let data = window.DATA.staticImagesDb;
-  //   let filteredData = {
-  //     query: _query,
-  //     images: [],
-  //   };
-  //   data.forEach(function(image) {
-  //     if (image.title.indexOf(_query) > -1) {
-  //       filteredData.images.push({
-  //         id: image.id,
-  //         url: image.url,
-  //         title: image.title,
-  //       });
-  //     }
-  //   });
-  //   return filteredData;
-  // }
-
-  ImageFinder.prototype.searchModules = function(_query, module) {
-    switch(module) {
+  /**
+  * Look for images in Static DB
+  * @param {String} _query - search term to look for
+  * @param {String} _module - module name to look in
+  * @param {Object} _gallery - gallery that requested the search
+  */
+  ImageFinder.prototype.search = function(_query, _module, _gallery) {
+    switch(_module) {
       case "static":
         return this._staticModule.findImages(_query);
       case "flickr":
-        return this._flickrModule.findImages(_query);
+        // Checking for pernding requests  from the same gallery and aborting them if not finished
+        for (item of this._flickrModuleRequestsArr) {
+          if (item.module == _module &&
+              item.request.status != 200 &&
+              item.request.readyState < 4 &&
+              item.gallery == _gallery)
+          {
+            item.request.abort();
+          }
+        }
+        var xhttp = new XMLHttpRequest();
+        this._flickrModuleRequestsArr.push({ request:xhttp, module:_module, gallery:_gallery });
+        return this._flickrModule.findImages(_query, xhttp);
       default:
-        console.log("GOT TO DEFAULT");
+        window.alert("No such module");
         break;
     }
   }
